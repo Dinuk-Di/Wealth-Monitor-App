@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "820399009266",
+    "project_id": "aiprojects-81738",
+    "storage_bucket": "aiprojects-81738.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:820399009266:android:22b508061446b273cccf6b",
+        "android_client_info": {
+          "package_name": "com.antigravity.wealth_orbit"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "820399009266-6oiabk69llgafubsa3al4qkqfrn01obp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBUPxmsYwN4_3Z0Oza699gTxwmUm0S6CkQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "820399009266-6oiabk69llgafubsa3al4qkqfrn01obp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
