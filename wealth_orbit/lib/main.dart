@@ -16,7 +16,7 @@ void main() async {
 
   runApp(ProviderScope(
     overrides: [
-      firebaseInitializedProvider.overrideWithValue(firebaseSuccess),
+      firebaseInitializedProvider.overrideWith((ref) => firebaseSuccess),
     ],
     child: const App(),
   ));
