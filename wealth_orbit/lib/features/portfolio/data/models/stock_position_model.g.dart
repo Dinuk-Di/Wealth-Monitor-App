@@ -23,18 +23,38 @@ const StockPositionModelSchema = CollectionSchema(
       name: r'averagePrice',
       type: IsarType.double,
     ),
-    r'lastUpdated': PropertySchema(
+    r'broker': PropertySchema(
       id: 1,
+      name: r'broker',
+      type: IsarType.string,
+    ),
+    r'companyName': PropertySchema(
+      id: 2,
+      name: r'companyName',
+      type: IsarType.string,
+    ),
+    r'currentPrice': PropertySchema(
+      id: 3,
+      name: r'currentPrice',
+      type: IsarType.double,
+    ),
+    r'lastUpdated': PropertySchema(
+      id: 4,
       name: r'lastUpdated',
       type: IsarType.dateTime,
     ),
+    r'sector': PropertySchema(
+      id: 5,
+      name: r'sector',
+      type: IsarType.string,
+    ),
     r'symbol': PropertySchema(
-      id: 2,
+      id: 6,
       name: r'symbol',
       type: IsarType.string,
     ),
     r'totalQuantity': PropertySchema(
-      id: 3,
+      id: 7,
       name: r'totalQuantity',
       type: IsarType.double,
     )
@@ -59,6 +79,9 @@ int _stockPositionModelEstimateSize(
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
+  bytesCount += 3 + object.broker.length * 3;
+  bytesCount += 3 + object.companyName.length * 3;
+  bytesCount += 3 + object.sector.length * 3;
   bytesCount += 3 + object.symbol.length * 3;
   return bytesCount;
 }
@@ -70,9 +93,13 @@ void _stockPositionModelSerialize(
   Map<Type, List<int>> allOffsets,
 ) {
   writer.writeDouble(offsets[0], object.averagePrice);
-  writer.writeDateTime(offsets[1], object.lastUpdated);
-  writer.writeString(offsets[2], object.symbol);
-  writer.writeDouble(offsets[3], object.totalQuantity);
+  writer.writeString(offsets[1], object.broker);
+  writer.writeString(offsets[2], object.companyName);
+  writer.writeDouble(offsets[3], object.currentPrice);
+  writer.writeDateTime(offsets[4], object.lastUpdated);
+  writer.writeString(offsets[5], object.sector);
+  writer.writeString(offsets[6], object.symbol);
+  writer.writeDouble(offsets[7], object.totalQuantity);
 }
 
 StockPositionModel _stockPositionModelDeserialize(
@@ -83,10 +110,14 @@ StockPositionModel _stockPositionModelDeserialize(
 ) {
   final object = StockPositionModel();
   object.averagePrice = reader.readDouble(offsets[0]);
+  object.broker = reader.readString(offsets[1]);
+  object.companyName = reader.readString(offsets[2]);
+  object.currentPrice = reader.readDouble(offsets[3]);
   object.id = id;
-  object.lastUpdated = reader.readDateTime(offsets[1]);
-  object.symbol = reader.readString(offsets[2]);
-  object.totalQuantity = reader.readDouble(offsets[3]);
+  object.lastUpdated = reader.readDateTime(offsets[4]);
+  object.sector = reader.readString(offsets[5]);
+  object.symbol = reader.readString(offsets[6]);
+  object.totalQuantity = reader.readDouble(offsets[7]);
   return object;
 }
 
@@ -100,10 +131,18 @@ P _stockPositionModelDeserializeProp<P>(
     case 0:
       return (reader.readDouble(offset)) as P;
     case 1:
-      return (reader.readDateTime(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 2:
       return (reader.readString(offset)) as P;
     case 3:
+      return (reader.readDouble(offset)) as P;
+    case 4:
+      return (reader.readDateTime(offset)) as P;
+    case 5:
+      return (reader.readString(offset)) as P;
+    case 6:
+      return (reader.readString(offset)) as P;
+    case 7:
       return (reader.readDouble(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -273,6 +312,344 @@ extension StockPositionModelQueryFilter
   }
 
   QueryBuilder<StockPositionModel, StockPositionModel, QAfterFilterCondition>
+      brokerEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'broker',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<StockPositionModel, StockPositionModel, QAfterFilterCondition>
+      brokerGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'broker',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<StockPositionModel, StockPositionModel, QAfterFilterCondition>
+      brokerLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'broker',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<StockPositionModel, StockPositionModel, QAfterFilterCondition>
+      brokerBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'broker',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<StockPositionModel, StockPositionModel, QAfterFilterCondition>
+      brokerStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'broker',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<StockPositionModel, StockPositionModel, QAfterFilterCondition>
+      brokerEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'broker',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<StockPositionModel, StockPositionModel, QAfterFilterCondition>
+      brokerContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'broker',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<StockPositionModel, StockPositionModel, QAfterFilterCondition>
+      brokerMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'broker',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<StockPositionModel, StockPositionModel, QAfterFilterCondition>
+      brokerIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'broker',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<StockPositionModel, StockPositionModel, QAfterFilterCondition>
+      brokerIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'broker',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<StockPositionModel, StockPositionModel, QAfterFilterCondition>
+      companyNameEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'companyName',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<StockPositionModel, StockPositionModel, QAfterFilterCondition>
+      companyNameGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'companyName',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<StockPositionModel, StockPositionModel, QAfterFilterCondition>
+      companyNameLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'companyName',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<StockPositionModel, StockPositionModel, QAfterFilterCondition>
+      companyNameBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'companyName',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<StockPositionModel, StockPositionModel, QAfterFilterCondition>
+      companyNameStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'companyName',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<StockPositionModel, StockPositionModel, QAfterFilterCondition>
+      companyNameEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'companyName',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<StockPositionModel, StockPositionModel, QAfterFilterCondition>
+      companyNameContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'companyName',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<StockPositionModel, StockPositionModel, QAfterFilterCondition>
+      companyNameMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'companyName',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<StockPositionModel, StockPositionModel, QAfterFilterCondition>
+      companyNameIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'companyName',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<StockPositionModel, StockPositionModel, QAfterFilterCondition>
+      companyNameIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'companyName',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<StockPositionModel, StockPositionModel, QAfterFilterCondition>
+      currentPriceEqualTo(
+    double value, {
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'currentPrice',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<StockPositionModel, StockPositionModel, QAfterFilterCondition>
+      currentPriceGreaterThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'currentPrice',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<StockPositionModel, StockPositionModel, QAfterFilterCondition>
+      currentPriceLessThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'currentPrice',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<StockPositionModel, StockPositionModel, QAfterFilterCondition>
+      currentPriceBetween(
+    double lower,
+    double upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'currentPrice',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<StockPositionModel, StockPositionModel, QAfterFilterCondition>
       idEqualTo(Id value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -380,6 +757,142 @@ extension StockPositionModelQueryFilter
         includeLower: includeLower,
         upper: upper,
         includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<StockPositionModel, StockPositionModel, QAfterFilterCondition>
+      sectorEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'sector',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<StockPositionModel, StockPositionModel, QAfterFilterCondition>
+      sectorGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'sector',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<StockPositionModel, StockPositionModel, QAfterFilterCondition>
+      sectorLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'sector',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<StockPositionModel, StockPositionModel, QAfterFilterCondition>
+      sectorBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'sector',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<StockPositionModel, StockPositionModel, QAfterFilterCondition>
+      sectorStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'sector',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<StockPositionModel, StockPositionModel, QAfterFilterCondition>
+      sectorEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'sector',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<StockPositionModel, StockPositionModel, QAfterFilterCondition>
+      sectorContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'sector',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<StockPositionModel, StockPositionModel, QAfterFilterCondition>
+      sectorMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'sector',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<StockPositionModel, StockPositionModel, QAfterFilterCondition>
+      sectorIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'sector',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<StockPositionModel, StockPositionModel, QAfterFilterCondition>
+      sectorIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'sector',
+        value: '',
       ));
     });
   }
@@ -610,6 +1123,48 @@ extension StockPositionModelQuerySortBy
   }
 
   QueryBuilder<StockPositionModel, StockPositionModel, QAfterSortBy>
+      sortByBroker() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'broker', Sort.asc);
+    });
+  }
+
+  QueryBuilder<StockPositionModel, StockPositionModel, QAfterSortBy>
+      sortByBrokerDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'broker', Sort.desc);
+    });
+  }
+
+  QueryBuilder<StockPositionModel, StockPositionModel, QAfterSortBy>
+      sortByCompanyName() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'companyName', Sort.asc);
+    });
+  }
+
+  QueryBuilder<StockPositionModel, StockPositionModel, QAfterSortBy>
+      sortByCompanyNameDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'companyName', Sort.desc);
+    });
+  }
+
+  QueryBuilder<StockPositionModel, StockPositionModel, QAfterSortBy>
+      sortByCurrentPrice() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'currentPrice', Sort.asc);
+    });
+  }
+
+  QueryBuilder<StockPositionModel, StockPositionModel, QAfterSortBy>
+      sortByCurrentPriceDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'currentPrice', Sort.desc);
+    });
+  }
+
+  QueryBuilder<StockPositionModel, StockPositionModel, QAfterSortBy>
       sortByLastUpdated() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'lastUpdated', Sort.asc);
@@ -620,6 +1175,20 @@ extension StockPositionModelQuerySortBy
       sortByLastUpdatedDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'lastUpdated', Sort.desc);
+    });
+  }
+
+  QueryBuilder<StockPositionModel, StockPositionModel, QAfterSortBy>
+      sortBySector() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'sector', Sort.asc);
+    });
+  }
+
+  QueryBuilder<StockPositionModel, StockPositionModel, QAfterSortBy>
+      sortBySectorDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'sector', Sort.desc);
     });
   }
 
@@ -669,6 +1238,48 @@ extension StockPositionModelQuerySortThenBy
   }
 
   QueryBuilder<StockPositionModel, StockPositionModel, QAfterSortBy>
+      thenByBroker() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'broker', Sort.asc);
+    });
+  }
+
+  QueryBuilder<StockPositionModel, StockPositionModel, QAfterSortBy>
+      thenByBrokerDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'broker', Sort.desc);
+    });
+  }
+
+  QueryBuilder<StockPositionModel, StockPositionModel, QAfterSortBy>
+      thenByCompanyName() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'companyName', Sort.asc);
+    });
+  }
+
+  QueryBuilder<StockPositionModel, StockPositionModel, QAfterSortBy>
+      thenByCompanyNameDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'companyName', Sort.desc);
+    });
+  }
+
+  QueryBuilder<StockPositionModel, StockPositionModel, QAfterSortBy>
+      thenByCurrentPrice() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'currentPrice', Sort.asc);
+    });
+  }
+
+  QueryBuilder<StockPositionModel, StockPositionModel, QAfterSortBy>
+      thenByCurrentPriceDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'currentPrice', Sort.desc);
+    });
+  }
+
+  QueryBuilder<StockPositionModel, StockPositionModel, QAfterSortBy>
       thenById() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.asc);
@@ -693,6 +1304,20 @@ extension StockPositionModelQuerySortThenBy
       thenByLastUpdatedDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'lastUpdated', Sort.desc);
+    });
+  }
+
+  QueryBuilder<StockPositionModel, StockPositionModel, QAfterSortBy>
+      thenBySector() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'sector', Sort.asc);
+    });
+  }
+
+  QueryBuilder<StockPositionModel, StockPositionModel, QAfterSortBy>
+      thenBySectorDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'sector', Sort.desc);
     });
   }
 
@@ -735,9 +1360,37 @@ extension StockPositionModelQueryWhereDistinct
   }
 
   QueryBuilder<StockPositionModel, StockPositionModel, QDistinct>
+      distinctByBroker({bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'broker', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<StockPositionModel, StockPositionModel, QDistinct>
+      distinctByCompanyName({bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'companyName', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<StockPositionModel, StockPositionModel, QDistinct>
+      distinctByCurrentPrice() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'currentPrice');
+    });
+  }
+
+  QueryBuilder<StockPositionModel, StockPositionModel, QDistinct>
       distinctByLastUpdated() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'lastUpdated');
+    });
+  }
+
+  QueryBuilder<StockPositionModel, StockPositionModel, QDistinct>
+      distinctBySector({bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'sector', caseSensitive: caseSensitive);
     });
   }
 
@@ -771,10 +1424,36 @@ extension StockPositionModelQueryProperty
     });
   }
 
+  QueryBuilder<StockPositionModel, String, QQueryOperations> brokerProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'broker');
+    });
+  }
+
+  QueryBuilder<StockPositionModel, String, QQueryOperations>
+      companyNameProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'companyName');
+    });
+  }
+
+  QueryBuilder<StockPositionModel, double, QQueryOperations>
+      currentPriceProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'currentPrice');
+    });
+  }
+
   QueryBuilder<StockPositionModel, DateTime, QQueryOperations>
       lastUpdatedProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'lastUpdated');
+    });
+  }
+
+  QueryBuilder<StockPositionModel, String, QQueryOperations> sectorProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'sector');
     });
   }
 

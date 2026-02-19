@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dashboard_view.dart';
 import '../../../../features/trans/presentation/pages/transaction_page.dart';
 import '../../../../features/portfolio/presentation/pages/portfolio_page.dart';
+import '../../../../features/reports/presentation/pages/reports_page.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
@@ -19,7 +20,7 @@ class _HomePageState extends ConsumerState<HomePage> {
     const DashboardView(),
     const TransactionPage(),
     const PortfolioPage(),
-    const Center(child: Text('Settings (Coming Soon)', style: TextStyle(color: Colors.white))),
+    const ReportsPage(),
   ];
 
   @override
@@ -50,7 +51,7 @@ class _HomePageState extends ConsumerState<HomePage> {
           BottomNavigationBarItem(icon: Icon(Icons.dashboard), label: 'Home'),
           BottomNavigationBarItem(icon: Icon(Icons.wallet), label: 'Wallet'),
           BottomNavigationBarItem(icon: Icon(Icons.show_chart), label: 'Invest'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+          BottomNavigationBarItem(icon: Icon(Icons.pie_chart), label: 'Reports'),
         ],
       ),
     );

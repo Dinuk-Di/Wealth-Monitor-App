@@ -8,14 +8,14 @@ class TransactionModel {
 
   late double amount;
 
+  late DateTime date;
+
+  late String note;
+
   @Enumerated(EnumType.name)
   late TransactionType type;
 
   late String category;
-
-  late DateTime date;
-
-  String? note;
 }
 
 enum TransactionType {

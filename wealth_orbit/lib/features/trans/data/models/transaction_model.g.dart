@@ -65,12 +65,7 @@ int _transactionModelEstimateSize(
 ) {
   var bytesCount = offsets.last;
   bytesCount += 3 + object.category.length * 3;
-  {
-    final value = object.note;
-    if (value != null) {
-      bytesCount += 3 + value.length * 3;
-    }
-  }
+  bytesCount += 3 + object.note.length * 3;
   bytesCount += 3 + object.type.name.length * 3;
   return bytesCount;
 }
@@ -99,7 +94,7 @@ TransactionModel _transactionModelDeserialize(
   object.category = reader.readString(offsets[1]);
   object.date = reader.readDateTime(offsets[2]);
   object.id = id;
-  object.note = reader.readStringOrNull(offsets[3]);
+  object.note = reader.readString(offsets[3]);
   object.type =
       _TransactionModeltypeValueEnumMap[reader.readStringOrNull(offsets[4])] ??
           TransactionType.income;
@@ -120,7 +115,7 @@ P _transactionModelDeserializeProp<P>(
     case 2:
       return (reader.readDateTime(offset)) as P;
     case 3:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 4:
       return (_TransactionModeltypeValueEnumMap[
               reader.readStringOrNull(offset)] ??
@@ -548,26 +543,8 @@ extension TransactionModelQueryFilter
   }
 
   QueryBuilder<TransactionModel, TransactionModel, QAfterFilterCondition>
-      noteIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'note',
-      ));
-    });
-  }
-
-  QueryBuilder<TransactionModel, TransactionModel, QAfterFilterCondition>
-      noteIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'note',
-      ));
-    });
-  }
-
-  QueryBuilder<TransactionModel, TransactionModel, QAfterFilterCondition>
       noteEqualTo(
-    String? value, {
+    String value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -581,7 +558,7 @@ extension TransactionModelQueryFilter
 
   QueryBuilder<TransactionModel, TransactionModel, QAfterFilterCondition>
       noteGreaterThan(
-    String? value, {
+    String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
@@ -597,7 +574,7 @@ extension TransactionModelQueryFilter
 
   QueryBuilder<TransactionModel, TransactionModel, QAfterFilterCondition>
       noteLessThan(
-    String? value, {
+    String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
@@ -613,8 +590,8 @@ extension TransactionModelQueryFilter
 
   QueryBuilder<TransactionModel, TransactionModel, QAfterFilterCondition>
       noteBetween(
-    String? lower,
-    String? upper, {
+    String lower,
+    String upper, {
     bool includeLower = true,
     bool includeUpper = true,
     bool caseSensitive = true,
@@ -1060,7 +1037,7 @@ extension TransactionModelQueryProperty
     });
   }
 
-  QueryBuilder<TransactionModel, String?, QQueryOperations> noteProperty() {
+  QueryBuilder<TransactionModel, String, QQueryOperations> noteProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'note');
     });

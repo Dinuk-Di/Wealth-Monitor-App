@@ -4,11 +4,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import '../../data/repositories/auth_repository_impl.dart';
 import '../../domain/repositories/auth_repository.dart';
 
-final firebaseInitializedProvider = StateProvider<bool>((ref) => false);
-
 final firebaseAuthProvider = Provider<FirebaseAuth>((ref) {
-  final initialized = ref.watch(firebaseInitializedProvider);
-  if (!initialized) throw Exception("Firebase not initialized");
   return FirebaseAuth.instance;
 });
 
@@ -24,7 +20,5 @@ final authRepositoryProvider = Provider<AuthRepository>((ref) {
 });
 
 final authStateChangesProvider = StreamProvider<User?>((ref) {
-  final initialized = ref.watch(firebaseInitializedProvider);
-  if (!initialized) return Stream.value(null);
   return ref.watch(authRepositoryProvider).authStateChanges;
 });

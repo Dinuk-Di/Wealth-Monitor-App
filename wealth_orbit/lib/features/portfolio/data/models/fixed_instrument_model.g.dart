@@ -28,33 +28,38 @@ const FixedInstrumentModelSchema = CollectionSchema(
       name: r'interestRate',
       type: IsarType.double,
     ),
-    r'isMatured': PropertySchema(
+    r'isAutoRenewal': PropertySchema(
       id: 2,
+      name: r'isAutoRenewal',
+      type: IsarType.bool,
+    ),
+    r'isMatured': PropertySchema(
+      id: 3,
       name: r'isMatured',
       type: IsarType.bool,
     ),
     r'maturityDate': PropertySchema(
-      id: 3,
+      id: 4,
       name: r'maturityDate',
       type: IsarType.dateTime,
     ),
     r'name': PropertySchema(
-      id: 4,
+      id: 5,
       name: r'name',
       type: IsarType.string,
     ),
     r'principalAmount': PropertySchema(
-      id: 5,
+      id: 6,
       name: r'principalAmount',
       type: IsarType.double,
     ),
     r'startDate': PropertySchema(
-      id: 6,
+      id: 7,
       name: r'startDate',
       type: IsarType.dateTime,
     ),
     r'type': PropertySchema(
-      id: 7,
+      id: 8,
       name: r'type',
       type: IsarType.string,
       enumMap: _FixedInstrumentModeltypeEnumValueMap,
@@ -94,12 +99,13 @@ void _fixedInstrumentModelSerialize(
 ) {
   writer.writeString(offsets[0], object.institution);
   writer.writeDouble(offsets[1], object.interestRate);
-  writer.writeBool(offsets[2], object.isMatured);
-  writer.writeDateTime(offsets[3], object.maturityDate);
-  writer.writeString(offsets[4], object.name);
-  writer.writeDouble(offsets[5], object.principalAmount);
-  writer.writeDateTime(offsets[6], object.startDate);
-  writer.writeString(offsets[7], object.type.name);
+  writer.writeBool(offsets[2], object.isAutoRenewal);
+  writer.writeBool(offsets[3], object.isMatured);
+  writer.writeDateTime(offsets[4], object.maturityDate);
+  writer.writeString(offsets[5], object.name);
+  writer.writeDouble(offsets[6], object.principalAmount);
+  writer.writeDateTime(offsets[7], object.startDate);
+  writer.writeString(offsets[8], object.type.name);
 }
 
 FixedInstrumentModel _fixedInstrumentModelDeserialize(
@@ -112,12 +118,13 @@ FixedInstrumentModel _fixedInstrumentModelDeserialize(
   object.id = id;
   object.institution = reader.readString(offsets[0]);
   object.interestRate = reader.readDouble(offsets[1]);
-  object.maturityDate = reader.readDateTime(offsets[3]);
-  object.name = reader.readString(offsets[4]);
-  object.principalAmount = reader.readDouble(offsets[5]);
-  object.startDate = reader.readDateTime(offsets[6]);
+  object.isAutoRenewal = reader.readBool(offsets[2]);
+  object.maturityDate = reader.readDateTime(offsets[4]);
+  object.name = reader.readString(offsets[5]);
+  object.principalAmount = reader.readDouble(offsets[6]);
+  object.startDate = reader.readDateTime(offsets[7]);
   object.type = _FixedInstrumentModeltypeValueEnumMap[
-          reader.readStringOrNull(offsets[7])] ??
+          reader.readStringOrNull(offsets[8])] ??
       FixedInstrumentType.fixedDeposit;
   return object;
 }
@@ -136,14 +143,16 @@ P _fixedInstrumentModelDeserializeProp<P>(
     case 2:
       return (reader.readBool(offset)) as P;
     case 3:
-      return (reader.readDateTime(offset)) as P;
+      return (reader.readBool(offset)) as P;
     case 4:
-      return (reader.readString(offset)) as P;
-    case 5:
-      return (reader.readDouble(offset)) as P;
-    case 6:
       return (reader.readDateTime(offset)) as P;
+    case 5:
+      return (reader.readString(offset)) as P;
+    case 6:
+      return (reader.readDouble(offset)) as P;
     case 7:
+      return (reader.readDateTime(offset)) as P;
+    case 8:
       return (_FixedInstrumentModeltypeValueEnumMap[
               reader.readStringOrNull(offset)] ??
           FixedInstrumentType.fixedDeposit) as P;
@@ -154,15 +163,19 @@ P _fixedInstrumentModelDeserializeProp<P>(
 
 const _FixedInstrumentModeltypeEnumValueMap = {
   r'fixedDeposit': r'fixedDeposit',
-  r'treasuryBond': r'treasuryBond',
   r'treasuryBill': r'treasuryBill',
+  r'treasuryBond': r'treasuryBond',
   r'unitTrust': r'unitTrust',
+  r'realEstate': r'realEstate',
+  r'other': r'other',
 };
 const _FixedInstrumentModeltypeValueEnumMap = {
   r'fixedDeposit': FixedInstrumentType.fixedDeposit,
-  r'treasuryBond': FixedInstrumentType.treasuryBond,
   r'treasuryBill': FixedInstrumentType.treasuryBill,
+  r'treasuryBond': FixedInstrumentType.treasuryBond,
   r'unitTrust': FixedInstrumentType.unitTrust,
+  r'realEstate': FixedInstrumentType.realEstate,
+  r'other': FixedInstrumentType.other,
 };
 
 Id _fixedInstrumentModelGetId(FixedInstrumentModel object) {
@@ -518,6 +531,16 @@ extension FixedInstrumentModelQueryFilter on QueryBuilder<FixedInstrumentModel,
         upper: upper,
         includeUpper: includeUpper,
         epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<FixedInstrumentModel, FixedInstrumentModel,
+      QAfterFilterCondition> isAutoRenewalEqualTo(bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'isAutoRenewal',
+        value: value,
       ));
     });
   }
@@ -1024,6 +1047,20 @@ extension FixedInstrumentModelQuerySortBy
   }
 
   QueryBuilder<FixedInstrumentModel, FixedInstrumentModel, QAfterSortBy>
+      sortByIsAutoRenewal() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isAutoRenewal', Sort.asc);
+    });
+  }
+
+  QueryBuilder<FixedInstrumentModel, FixedInstrumentModel, QAfterSortBy>
+      sortByIsAutoRenewalDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isAutoRenewal', Sort.desc);
+    });
+  }
+
+  QueryBuilder<FixedInstrumentModel, FixedInstrumentModel, QAfterSortBy>
       sortByIsMatured() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isMatured', Sort.asc);
@@ -1153,6 +1190,20 @@ extension FixedInstrumentModelQuerySortThenBy
   }
 
   QueryBuilder<FixedInstrumentModel, FixedInstrumentModel, QAfterSortBy>
+      thenByIsAutoRenewal() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isAutoRenewal', Sort.asc);
+    });
+  }
+
+  QueryBuilder<FixedInstrumentModel, FixedInstrumentModel, QAfterSortBy>
+      thenByIsAutoRenewalDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isAutoRenewal', Sort.desc);
+    });
+  }
+
+  QueryBuilder<FixedInstrumentModel, FixedInstrumentModel, QAfterSortBy>
       thenByIsMatured() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isMatured', Sort.asc);
@@ -1254,6 +1305,13 @@ extension FixedInstrumentModelQueryWhereDistinct
   }
 
   QueryBuilder<FixedInstrumentModel, FixedInstrumentModel, QDistinct>
+      distinctByIsAutoRenewal() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'isAutoRenewal');
+    });
+  }
+
+  QueryBuilder<FixedInstrumentModel, FixedInstrumentModel, QDistinct>
       distinctByIsMatured() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'isMatured');
@@ -1315,6 +1373,13 @@ extension FixedInstrumentModelQueryProperty on QueryBuilder<
       interestRateProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'interestRate');
+    });
+  }
+
+  QueryBuilder<FixedInstrumentModel, bool, QQueryOperations>
+      isAutoRenewalProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'isAutoRenewal');
     });
   }
 

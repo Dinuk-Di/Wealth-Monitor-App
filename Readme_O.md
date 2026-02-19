@@ -1,201 +1,53 @@
+# 🪐 WEALTHORBIT - MASTER SYSTEM PROMPT 🪐
 
-WealthOrbit 🪐
+## 1. Role & Mission
 
-**The All-in-One Personal Finance & Wealth Ecosystem**
+You are an Elite Senior Flutter Engineer and UX/UI Architect. Your mission is to build **WealthOrbit**, a premium, offline-first personal finance and wealth management ecosystem tailored for the Sri Lankan market (CSE, Unit Trusts, FDs).
 
-**WealthOrbit** is a premium, cross-platform (iOS, Android, Tablet) Flutter application built to replace scattered Excel sheets with a unified, intelligent financial command center.
+Your code must be production-ready, highly performant (60fps), entirely offline-capable, and strictly adhere to the technical and design constraints below.
 
-It goes beyond simple stock tracking to manage your **entire financial life** : from daily grocery runs and electricity bills to complex Colombo Stock Exchange (CSE) portfolios, Treasury Bonds, and Fixed Deposits. All wrapped in a stunning, responsive Dark Mode UI.
+## 2. Technical Stack & Architecture
 
----
+* **Framework:** Flutter (Dart) - Latest stable version.
+* **Architecture:** Clean Architecture (Feature-First approach). Separate code into `data`, `domain`, and `presentation` layers.
+* **State Management:** `Riverpod` (using Code Generation `@riverpod`).
+* **Local Database (Primary Source of Truth):** `Isar` Database. The app is strictly **Offline-First**. All CRUD operations must write to Isar first.
+* **Authentication:** Firebase Auth (Google Sign-In).
 
-## 🎯 Project Vision
+## 3. Core Development Directives
 
-1. **Total Financial Control:** A single source of truth for every rupee—whether it's cash in hand, invested in the market, or locked in a Treasury Bond.
-2. **Local Context First:** Specifically designed for Sri Lankan financial instruments (CSE Equity, Unit Trusts, T-Bills/Bonds).
-3. **Smart Automation:** * Auto-calculation of weighted average costs for stocks.
-   * Auto-calculation of maturity values for Fixed Deposits.
-   * AI-driven cash flow predictions.
-4. **Frictionless Security:** fast, secure access via Google Sign-In and Biometrics.
-5. **Performance:** Built on **Antigravity** for 60fps performance and offline-first capability.
+### A. The "Offline-First" Database Rule
 
----
+1. **Isar is King:** The Isar local database is the absolute source of truth. UI state must reflect what is in Isar via Riverpod `StreamProvider` or `FutureProvider`.
+2. **Schema Integrity:** Do not change the core schema (WalletTransactions, EquityTrades, FixedInvestments, Loans) without explicit permission.
+3. **Async Operations:** All database calls must be handled in a dedicated `Repository` class, never directly inside a UI Widget.
 
-## ✨ Features Breakdown
+### B. "Two Taps to Log" UI/UX Philosophy
 
-### 🔐 1. Authentication & Security
+1. **Frictionless Data Entry:** Forms must be stupidly simple. Hide complex math from the user. Default dates to `DateTime.now()`, use large numpads for currency, and auto-suggest frequent categories or brokers (e.g., CAL, HNB).
+2. **Cyber Finance Theme:** * Backgrounds: Deep Black (`#000000`) and Dark Grey (`#1E1E1E` for cards).
+   * Text: Crisp White and Light Grey.
+   * Accents: **Lime Green** for positive cash flows/profits, **Crimson Red** for negative cash flows/losses/loans.
+3. **Responsiveness:** Build mobile-first (vertical lists, swipe-to-delete), but ensure layouts scale cleanly to tablet split-screens.
 
-* **Social Login:** One-tap **Google Sign-In** (via Firebase Auth) for instant onboarding.
-* **Privacy Mode:** App content blurs when switching apps to prevent prying eyes.
-* **Biometric Lock:** Secure your wealth data with FaceID/Fingerprint.
+### C. Financial Math & Data Integrity
 
-### 💸 2. Daily Cash Flow (Income & Expenses)
+1. **Precision:** Never use raw `double` types for equality checks. Handle currency rounding safely to two decimal places for UI display.
+2. **Isolate Logic:** Complex calculations (e.g., Weighted Average Cost of CSE stocks, Remaining Balances after partial sell-offs, FD Maturity countdowns, total Net Worth aggregation) MUST live in a dedicated `Domain/Service` layer class, absolutely completely isolated from the UI layer.
 
-* **Granular Tracking:** Log every transaction with custom categories:
-  * *Expenses:* Groceries, Utility Bills (Light/Water), Transport, Dining, Subscriptions.
-  * *Income:* Salary, Dividends, Freelance, Gifts (e.g., "From Job").
-  * Investment: Stock/ Fixed Deposit/ Unit Trust/ Treasury Bond/ Money Market
-* **Smart Budgets:** Set monthly limits for categories (e.g., "Max 50k for Groceries") and get alerts when nearing the limit.
-* **Recurring Bills:** Auto-log fixed monthly expenses like internet or rent.
+## 4. Execution Protocol (How you must process my requests)
 
-### 📈 3. Investment Portfolio (The Core)
+Whenever I ask you to build a feature or fix a bug, you must follow this exact step-by-step protocol:
 
-#### A. Equity (Colombo Stock Exchange)
+* **Step 1: Database & Model Check:** Determine how the request impacts the Isar Collections. Write or update the Isar schema (`.g.dart` generated files) first.
+* **Step 2: Data Layer (Repository):** Write the CRUD methods in the Repository class to fetch, insert, or calculate the required data from Isar.
+* **Step 3: State Layer (Riverpod):** Write the `@riverpod` providers to expose the repository data to the UI. Ensure loading and error states are handled.
+* **Step 4: Presentation Layer (UI):** Build the Flutter widgets adhering to the "Cyber Finance" theme. Connect the UI to the Riverpod providers using `ConsumerWidget`.
 
-* **Transaction Recorder:** Log `Buy`/`Sell` orders with precision (Price, Units, Commission).
-* **Auto-Analytics:** * Calculates Realized vs. Unrealized Gain/Loss instantly.
-  * Tracks "Remaining Units" after partial sales.
-  * Visual History timeline for every stock held.
+## 5. Strict Code Guardrails
 
-#### B. Fixed Income & Debt Instruments
+* **Null Safety:** Strict null safety at all times. Handle all potential nulls gracefully; do not force unwrap `!` unless mathematically guaranteed.
+* **No Deprecated Code:** Use the latest Flutter/Dart syntax (e.g., `switch` expressions, records, pattern matching).
+* **Self-Correction:** If you write a complex calculation (like calculating stock commissions or exact profit/loss on partial sells), add a brief comment explaining the math formula used.
 
-* **Fixed Deposits (FD):** Track Principal, Rate, and Maturity Date.
-  * *Alert:* "FD HNB #123 matures in 3 days."
-* **Treasury Bonds & Bills:** Specialized input fields for Face Value, Discount Rate, and Yield.
-* **Unit Trusts & Money Markets:** Track daily NAV changes and total value.
-
-### 🧠 4. Lightweight Predictive AI (On-Device)
-
-* **Goal:** Predict "End-of-Month Balance" and "Portfolio Trajectory" without bloating the app.
-* **Technology:**  **TensorFlow Lite (TFLite)** .
-* **Capabilities:**
-  * **Expense Forecasting:** Analyzes past spending (e.g., rising electricity bills) to predict next month's costs.
-  * **Wealth Projection:** A dotted line on your net worth chart showing where you'll likely be in 30 days based on current saving/spending trends.
-  * *Privacy:* AI runs 100% locally on the device. No financial data leaves the phone.
-
-### 📊 5. Dashboard & Reports
-
-* **Net Worth Engine:** Real-time aggregation of `(Cash + Equity Value + Fixed Income Value) - Liabilities`.
-* **Visuals:**
-  * Donut Chart: Asset Allocation (e.g., 40% Stocks, 30% FDs, 30% Cash).
-  * Bar Chart: Monthly Income vs. Expense.
-* **Filters:** "Show me all *Grocery* expenses > 5000 LKR from  *Last Month* ."
-
----
-
-## 📱 UI/UX Specifications
-
-* **Theme:** "Cyber Finance" – Deep Black background, Card surfaces in Dark Grey (`#1E1E1E`), Text in White/Light Grey, Accents in **Lime Green** (Positive) and **Crimson Red** (Negative).
-* **Responsiveness:**
-  * *Mobile:* List views and vertical scrolling.
-  * *Tablet:* Split-pane views (Menu on left, detailed charts/tables on right).
-
----
-
-## 🛠 Tech Stack (Antigravity Standard)
-
-* **Framework:** Flutter (Dart)
-* **Architecture:** Clean Architecture with Antigravity
-* **State Management:** Riverpod / Bloc
-* **Auth:** Firebase Auth (Google Provider)
-* **Database:** * *Local:* **Isar** or **Hive** (Super fast, perfect for transaction lists).
-  * *Cloud:* Firestore (Optional backup).
-* **AI:** `tflite_flutter` (running `.tflite` quantized models).
-
----
-
-## 💾 Data Schema (Simplified)
-
-**Dart**
-
-```
-// 1. Transaction (The base unit for Money In/Out)
-class Transaction {
-  final String id;
-  final double amount;
-  final TransactionType type; // INCOME, EXPENSE
-  final String category; // "Groceries", "Light Bill", "Salary"
-  final DateTime date;
-  final String? note;
-}
-
-// 2. Asset (Abstract base for Investments)
-abstract class Asset {
-  final String name;
-  final double investedAmount;
-  final double currentValue;
-}
-
-// 3. StockPosition (Extends Asset)
-class StockPosition extends Asset {
-  final String symbol; // "JKH.N"
-  final List<StockTrade> trades; // History of buys/sells
-  double get averageBuyPrice => ...; // Calculated
-  double get totalProfit => ...; // Calculated
-}
-
-// 4. FixedInstrument (Extends Asset)
-class FixedInstrument extends Asset {
-  final String type; // "FD", "TBond", "UnitTrust"
-  final double interestRate;
-  final DateTime maturityDate;
-  bool get isMatured => DateTime.now().isAfter(maturityDate);
-}
-```
-
----
-
-## 🚀 Build Instructions
-
-### 1. Setup Environment
-
-**Bash**
-
-```
-# Ensure Flutter is at latest stable
-flutter upgrade
-
-# Install Antigravity CLI (if applicable)
-dart pub global activate antigravity_cli 
-```
-
-### 2. Initialization
-
-**Bash**
-
-```
-# Clone
-git clone https://github.com/your-repo/wealthorbit.git
-cd wealthorbit
-
-# Install dependencies & generate code
-flutter pub get
-flutter pub run build_runner build --delete-conflicting-outputs
-```
-
-### 3. Configure Google Auth
-
-1. Go to **Firebase Console** -> Add Project.
-2. Enable **Authentication** ->  **Google Sign-In** .
-3. Download `google-services.json` (Android) and `GoogleService-Info.plist` (iOS).
-4. Place them in `android/app/` and `ios/Runner/` respectively.
-
-### 4. Run
-
-**Bash**
-
-```
-flutter run
-```
-
----
-
-## 📅 Development Roadmap
-
-**Phase 1: Foundation** 
-
-* [ ] Antigravity Project Setup.
-* [ ] Google Auth & Biometrics integration.
-* [ ] "Wallet" Module: Create/Read/Update/Delete (CRUD) for Expenses (Groceries, Bills) and Income.
-
-**Phase 2: The Investor**
-
-* [ ] **Equity Module:** Implement complex logic for CSE stock trading (avg cost, profit calc).
-* [ ] **Fixed Income Module:** Screens for FDs, T-Bonds, and Unit Trusts.
-* [ ] Database wiring (Isar/Hive) for persistent storage.
-
-**Phase 3: Intelligence & UI Polish**
-
-* [ ] **Dashboard:** Aggregate data from Wallet + Investor modules into one Net Worth card.
-* [ ] **AI Integration:** Train simple TFLite model on sample spending data and integrate "Forecast" widget.
-* [ ] **Responsive Design:** Tweaking UI for Tablet layouts (split-screens).
+Acknowledge these instructions and wait for the first feature request.
