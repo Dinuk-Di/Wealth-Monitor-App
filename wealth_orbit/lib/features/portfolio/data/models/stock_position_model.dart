@@ -14,23 +14,58 @@ class StockPositionModel {
 
   late double totalQuantity;
 
-  late double averagePrice;
+  late double averagePrice; // Bought Price
 
   late double currentPrice; // For real-time valuation
 
   late String sector; // e.g. Manufacturing, Banking
 
+  late DateTime boughtDate;
+
+  double boughtCommission = 0;
+
+  double? soldPrice;
+
+  DateTime? soldDate;
+
+  double? soldCommission;
+
+  String? comments;
+
+  @Enumerated(EnumType.name)
+  late StockStatus status;
+
   @ignore
-  double get totalInvested => totalQuantity * averagePrice;
+  double get totalInvested => (totalQuantity * averagePrice) + boughtCommission;
 
   @ignore
   double get currentValue => totalQuantity * currentPrice;
 
   @ignore
-  double get unrealizedProfit => currentValue - totalInvested;
+  double get soldValue => (status == StockStatus.sold && soldPrice != null) 
+      ? (totalQuantity * soldPrice!) - (soldCommission ?? 0) 
+      : 0;
 
   @ignore
-  double get profitPercentage => totalInvested == 0 ? 0 : (unrealizedProfit / totalInvested) * 100;
+  double get realizedProfit => (status == StockStatus.sold) ? soldValue - totalInvested : 0;
+
+  @ignore
+  double get unrealizedProfit => (status == StockStatus.open) ? currentValue - totalInvested : 0;
+
+  @ignore
+  double get profitPercentage {
+    if (totalInvested == 0) return 0;
+    if (status == StockStatus.sold) {
+      return (realizedProfit / totalInvested) * 100;
+    } else {
+      return (unrealizedProfit / totalInvested) * 100;
+    }
+  }
 
   late DateTime lastUpdated;
+}
+
+enum StockStatus {
+  open,
+  sold,
 }
