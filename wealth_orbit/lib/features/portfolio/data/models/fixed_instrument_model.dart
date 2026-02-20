@@ -23,7 +23,13 @@ class FixedInstrumentModel {
   @Enumerated(EnumType.name)
   late FixedInstrumentType type;
 
-  bool get isMatured => DateTime.now().isAfter(maturityDate);
+  @Enumerated(EnumType.name)
+  late FixedStatus status;
+
+  bool get isMatured {
+    if (status == FixedStatus.matured) return true;
+    return DateTime.now().isAfter(maturityDate);
+  }
 
   // Estimation
   @ignore
@@ -35,6 +41,12 @@ enum FixedInstrumentType {
   treasuryBill, // 3M, 6M, 12M
   treasuryBond, // > 1 Year
   unitTrust,
+  moneyMarketFund,
   realEstate, // For "Overseas Real" type
   other,
+}
+
+enum FixedStatus {
+  active,
+  matured,
 }

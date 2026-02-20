@@ -58,8 +58,14 @@ const FixedInstrumentModelSchema = CollectionSchema(
       name: r'startDate',
       type: IsarType.dateTime,
     ),
-    r'type': PropertySchema(
+    r'status': PropertySchema(
       id: 8,
+      name: r'status',
+      type: IsarType.string,
+      enumMap: _FixedInstrumentModelstatusEnumValueMap,
+    ),
+    r'type': PropertySchema(
+      id: 9,
       name: r'type',
       type: IsarType.string,
       enumMap: _FixedInstrumentModeltypeEnumValueMap,
@@ -87,6 +93,7 @@ int _fixedInstrumentModelEstimateSize(
   var bytesCount = offsets.last;
   bytesCount += 3 + object.institution.length * 3;
   bytesCount += 3 + object.name.length * 3;
+  bytesCount += 3 + object.status.name.length * 3;
   bytesCount += 3 + object.type.name.length * 3;
   return bytesCount;
 }
@@ -105,7 +112,8 @@ void _fixedInstrumentModelSerialize(
   writer.writeString(offsets[5], object.name);
   writer.writeDouble(offsets[6], object.principalAmount);
   writer.writeDateTime(offsets[7], object.startDate);
-  writer.writeString(offsets[8], object.type.name);
+  writer.writeString(offsets[8], object.status.name);
+  writer.writeString(offsets[9], object.type.name);
 }
 
 FixedInstrumentModel _fixedInstrumentModelDeserialize(
@@ -123,8 +131,11 @@ FixedInstrumentModel _fixedInstrumentModelDeserialize(
   object.name = reader.readString(offsets[5]);
   object.principalAmount = reader.readDouble(offsets[6]);
   object.startDate = reader.readDateTime(offsets[7]);
-  object.type = _FixedInstrumentModeltypeValueEnumMap[
+  object.status = _FixedInstrumentModelstatusValueEnumMap[
           reader.readStringOrNull(offsets[8])] ??
+      FixedStatus.active;
+  object.type = _FixedInstrumentModeltypeValueEnumMap[
+          reader.readStringOrNull(offsets[9])] ??
       FixedInstrumentType.fixedDeposit;
   return object;
 }
@@ -153,6 +164,10 @@ P _fixedInstrumentModelDeserializeProp<P>(
     case 7:
       return (reader.readDateTime(offset)) as P;
     case 8:
+      return (_FixedInstrumentModelstatusValueEnumMap[
+              reader.readStringOrNull(offset)] ??
+          FixedStatus.active) as P;
+    case 9:
       return (_FixedInstrumentModeltypeValueEnumMap[
               reader.readStringOrNull(offset)] ??
           FixedInstrumentType.fixedDeposit) as P;
@@ -161,11 +176,20 @@ P _fixedInstrumentModelDeserializeProp<P>(
   }
 }
 
+const _FixedInstrumentModelstatusEnumValueMap = {
+  r'active': r'active',
+  r'matured': r'matured',
+};
+const _FixedInstrumentModelstatusValueEnumMap = {
+  r'active': FixedStatus.active,
+  r'matured': FixedStatus.matured,
+};
 const _FixedInstrumentModeltypeEnumValueMap = {
   r'fixedDeposit': r'fixedDeposit',
   r'treasuryBill': r'treasuryBill',
   r'treasuryBond': r'treasuryBond',
   r'unitTrust': r'unitTrust',
+  r'moneyMarketFund': r'moneyMarketFund',
   r'realEstate': r'realEstate',
   r'other': r'other',
 };
@@ -174,6 +198,7 @@ const _FixedInstrumentModeltypeValueEnumMap = {
   r'treasuryBill': FixedInstrumentType.treasuryBill,
   r'treasuryBond': FixedInstrumentType.treasuryBond,
   r'unitTrust': FixedInstrumentType.unitTrust,
+  r'moneyMarketFund': FixedInstrumentType.moneyMarketFund,
   r'realEstate': FixedInstrumentType.realEstate,
   r'other': FixedInstrumentType.other,
 };
@@ -872,6 +897,144 @@ extension FixedInstrumentModelQueryFilter on QueryBuilder<FixedInstrumentModel,
   }
 
   QueryBuilder<FixedInstrumentModel, FixedInstrumentModel,
+      QAfterFilterCondition> statusEqualTo(
+    FixedStatus value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'status',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<FixedInstrumentModel, FixedInstrumentModel,
+      QAfterFilterCondition> statusGreaterThan(
+    FixedStatus value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'status',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<FixedInstrumentModel, FixedInstrumentModel,
+      QAfterFilterCondition> statusLessThan(
+    FixedStatus value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'status',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<FixedInstrumentModel, FixedInstrumentModel,
+      QAfterFilterCondition> statusBetween(
+    FixedStatus lower,
+    FixedStatus upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'status',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<FixedInstrumentModel, FixedInstrumentModel,
+      QAfterFilterCondition> statusStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'status',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<FixedInstrumentModel, FixedInstrumentModel,
+      QAfterFilterCondition> statusEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'status',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<FixedInstrumentModel, FixedInstrumentModel,
+          QAfterFilterCondition>
+      statusContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'status',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<FixedInstrumentModel, FixedInstrumentModel,
+          QAfterFilterCondition>
+      statusMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'status',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<FixedInstrumentModel, FixedInstrumentModel,
+      QAfterFilterCondition> statusIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'status',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<FixedInstrumentModel, FixedInstrumentModel,
+      QAfterFilterCondition> statusIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'status',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<FixedInstrumentModel, FixedInstrumentModel,
       QAfterFilterCondition> typeEqualTo(
     FixedInstrumentType value, {
     bool caseSensitive = true,
@@ -1131,6 +1294,20 @@ extension FixedInstrumentModelQuerySortBy
   }
 
   QueryBuilder<FixedInstrumentModel, FixedInstrumentModel, QAfterSortBy>
+      sortByStatus() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'status', Sort.asc);
+    });
+  }
+
+  QueryBuilder<FixedInstrumentModel, FixedInstrumentModel, QAfterSortBy>
+      sortByStatusDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'status', Sort.desc);
+    });
+  }
+
+  QueryBuilder<FixedInstrumentModel, FixedInstrumentModel, QAfterSortBy>
       sortByType() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'type', Sort.asc);
@@ -1274,6 +1451,20 @@ extension FixedInstrumentModelQuerySortThenBy
   }
 
   QueryBuilder<FixedInstrumentModel, FixedInstrumentModel, QAfterSortBy>
+      thenByStatus() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'status', Sort.asc);
+    });
+  }
+
+  QueryBuilder<FixedInstrumentModel, FixedInstrumentModel, QAfterSortBy>
+      thenByStatusDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'status', Sort.desc);
+    });
+  }
+
+  QueryBuilder<FixedInstrumentModel, FixedInstrumentModel, QAfterSortBy>
       thenByType() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'type', Sort.asc);
@@ -1347,6 +1538,13 @@ extension FixedInstrumentModelQueryWhereDistinct
   }
 
   QueryBuilder<FixedInstrumentModel, FixedInstrumentModel, QDistinct>
+      distinctByStatus({bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'status', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<FixedInstrumentModel, FixedInstrumentModel, QDistinct>
       distinctByType({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'type', caseSensitive: caseSensitive);
@@ -1414,6 +1612,13 @@ extension FixedInstrumentModelQueryProperty on QueryBuilder<
       startDateProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'startDate');
+    });
+  }
+
+  QueryBuilder<FixedInstrumentModel, FixedStatus, QQueryOperations>
+      statusProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'status');
     });
   }
 
